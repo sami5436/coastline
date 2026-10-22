@@ -43,7 +43,15 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
-export function ResultView({ result, amounts }: { result: Result; amounts: boolean }) {
+export function ResultView({
+  result,
+  amounts,
+  action,
+}: {
+  result: Result;
+  amounts: boolean;
+  action?: React.ReactNode;
+}) {
   const { plan, target, coastNumber, successes, periods, worst, median, saveYears, coastAge } =
     result;
   const { title, body } = headline(result, amounts);
@@ -53,6 +61,7 @@ export function ResultView({ result, amounts }: { result: Result; amounts: boole
     <div>
       <h2 className="text-4xl font-semibold tracking-tight sm:text-5xl">{title}</h2>
       <p className="mt-3 text-base leading-relaxed text-muted">{body}</p>
+      {action}
 
       <dl className="mt-8 grid grid-cols-3 gap-4 border-y border-line py-5">
         {amounts ? (
@@ -88,7 +97,12 @@ export function ResultView({ result, amounts }: { result: Result; amounts: boole
           {plan.retireAge} if the market repeated what it did starting that year.
         </p>
         <div className="mt-5">
-          <StartYearChart periods={periods} target={target} amounts={amounts} />
+          {/* Without amounts the chart only ever sees balances as a share of the target. */}
+          <StartYearChart
+            periods={amounts ? periods : periods.map((p) => ({ ...p, final: p.final / target }))}
+            target={amounts ? target : 1}
+            amounts={amounts}
+          />
         </div>
         <dl className="mt-6 grid grid-cols-2 gap-4 text-sm">
           <div>
