@@ -57,7 +57,7 @@ export function ResultView({ result, amounts }: { result: Result; amounts: boole
       <dl className="mt-8 grid grid-cols-3 gap-4 border-y border-line py-5">
         {amounts ? (
           <>
-            <Stat label="Coast number today" value={money(coastNumber)} />
+            <Stat label="Coast number" value={money(coastNumber)} />
             <Stat label={`Needed at ${plan.retireAge}`} value={money(target)} />
           </>
         ) : (

@@ -73,13 +73,9 @@ export function StartYearChart({
           })}
         </svg>
         <div
-          className="pointer-events-none absolute inset-x-0 border-t border-fg"
+          className="pointer-events-none absolute inset-x-0 h-px bg-white mix-blend-difference"
           style={{ bottom: `${targetY}%` }}
-        >
-          <span className="absolute right-0 -top-5 bg-bg pl-1.5 text-xs text-muted">
-            Target {amounts ? moneyShort(target) : ""}
-          </span>
-        </div>
+        />
       </div>
 
       <div className="mt-2 flex justify-between text-xs tabular-nums text-muted">
@@ -95,7 +91,9 @@ export function StartYearChart({
         <span className="flex items-center gap-1.5">
           <span className="size-2.5 rounded-sm bg-miss" /> Fell short
         </span>
-        <span>Bars are start years</span>
+        <span className="flex items-center gap-1.5">
+          <span className="h-px w-3 bg-fg" /> Target{amounts && <> {moneyShort(target)}</>}
+        </span>
       </figcaption>
 
       <table className="sr-only">
