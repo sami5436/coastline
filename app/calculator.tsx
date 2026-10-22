@@ -17,6 +17,8 @@ export function Calculator() {
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
+      // localStorage only exists after hydration, so the saved plan loads here.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (saved) setPlan(sanitize(JSON.parse(saved)));
     } catch {}
     setLoaded(true);

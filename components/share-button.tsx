@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { savePlan } from "@/app/actions";
 import type { Plan } from "@/lib/coast";
 
@@ -15,19 +15,15 @@ type Status = "idle" | "shared" | "copied" | "error";
 
 export function ShareButton({ plan, title }: { plan: Plan; title: string }) {
   const [showAmounts, setShowAmounts] = useState(false);
-  const [status, setStatus] = useState<Status>("idle");
-  const [link, setLink] = useState<string | null>(null);
-
-  // A link is a snapshot, so any edit means the next tap makes a new one.
-  useEffect(() => {
-    setStatus("idle");
-    setLink(null);
-  }, [plan, showAmounts]);
+  // A link is a snapshot of one plan, so it is only shown while that plan is on screen.
+  const snapshot = JSON.stringify([plan, showAmounts]);
+  const [made, setMade] = useState<{ snapshot: string; link: string; status: Status } | null>(null);
+  const current = made?.snapshot === snapshot ? made : null;
 
   function share() {
     const url = `${location.origin}/p/${newId()}`;
     const saved = savePlan(url.split("/").pop()!, plan, showAmounts);
-    setLink(url);
+    const done = (status: Status) => setMade({ snapshot, link: url, status });
 
     // Safari only allows the share sheet and clipboard during the tap itself,
     // so both start before waiting on the save.
@@ -39,8 +35,8 @@ export function ShareButton({ plan, title }: { plan: Plan; title: string }) {
       : copy(url);
 
     Promise.all([saved, opened])
-      .then(([ok, next]) => setStatus(ok ? next : "error"))
-      .catch(() => setStatus("error"));
+      .then(([ok, next]) => done(ok ? next : "error"))
+      .catch(() => done("error"));
   }
 
   function copy(url: string) {
@@ -70,15 +66,15 @@ export function ShareButton({ plan, title }: { plan: Plan; title: string }) {
           Show dollar amounts
         </label>
       </div>
-      {link && status !== "idle" && (
+      {current && current.status !== "idle" && (
         <p className="mt-3 text-sm text-muted" aria-live="polite">
-          {status === "error" ? (
+          {current.status === "error" ? (
             "Could not save that link. Try again."
           ) : (
             <>
-              {status === "copied" ? "Link copied: " : "Shared: "}
-              <a href={link} className="break-all text-fg underline underline-offset-4">
-                {link.replace(/^https?:\/\//, "")}
+              {current.status === "copied" ? "Link copied: " : "Shared: "}
+              <a href={current.link} className="break-all text-fg underline underline-offset-4">
+                {current.link.replace(/^https?:\/\//, "")}
               </a>
             </>
           )}
