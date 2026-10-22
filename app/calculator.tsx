@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from "react";
 import { CONFIDENCE_LEVELS, DEFAULT_PLAN, runPlan, sanitize, type Plan } from "@/lib/coast";
 import { NumberField, Segmented } from "@/components/fields";
 import { ResultView } from "@/components/result-view";
+import { ShareButton } from "@/components/share-button";
+import { shareText } from "@/lib/share-text";
 
 const STORAGE_KEY = "coastline:plan";
 const WITHDRAWAL_RATES = [3, 3.5, 4, 4.5, 5] as const;
@@ -102,7 +104,11 @@ export function Calculator() {
         </details>
       </form>
 
-      <ResultView result={result} amounts />
+      <ResultView
+        result={result}
+        amounts
+        action={<ShareButton plan={result.plan} title={shareText(result).title} />}
+      />
     </div>
   );
 }
