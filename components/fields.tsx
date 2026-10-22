@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useState } from "react";
+import { useId, useState } from "react";
 import { grouped } from "@/lib/format";
 
 const box =
@@ -20,13 +20,8 @@ export function NumberField({
   suffix?: string;
 }) {
   const id = useId();
-  const [text, setText] = useState(grouped(value));
-  const [focused, setFocused] = useState(false);
-
-  // Follow outside changes (like a reset) without fighting the user mid edit.
-  useEffect(() => {
-    if (!focused) setText(grouped(value));
-  }, [value, focused]);
+  // While editing, show exactly what was typed; otherwise show the real value.
+  const [draft, setDraft] = useState<string | null>(null);
 
   return (
     <div>
@@ -40,15 +35,15 @@ export function NumberField({
           inputMode="numeric"
           autoComplete="off"
           className="w-full min-w-0 bg-transparent py-3 text-base tabular-nums outline-none"
-          value={text}
+          value={draft ?? grouped(value)}
           onFocus={(e) => {
-            setFocused(true);
+            setDraft(grouped(value));
             e.target.select();
           }}
-          onBlur={() => setFocused(false)}
+          onBlur={() => setDraft(null)}
           onChange={(e) => {
             const digits = e.target.value.replace(/[^\d]/g, "").slice(0, 10);
-            setText(digits ? grouped(Number(digits)) : "");
+            setDraft(digits ? grouped(Number(digits)) : "");
             if (digits) onChange(Number(digits));
           }}
         />

@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import { Geist } from "next/font/google";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, baseOpenGraph, baseTwitter } from "@/lib/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -9,8 +10,29 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Coastline",
-  description: "Find the age you can stop saving for retirement, tested against every stock market since 1928.",
+  metadataBase: new URL(SITE_URL),
+  title: { default: `${SITE_NAME}: when can you stop saving?`, template: `%s | ${SITE_NAME}` },
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  appleWebApp: { title: SITE_NAME, statusBarStyle: "default" },
+  openGraph: {
+    ...baseOpenGraph,
+    title: "When can you stop saving for retirement?",
+    description: SITE_DESCRIPTION,
+    url: "/",
+  },
+  twitter: {
+    ...baseTwitter,
+    title: "When can you stop saving for retirement?",
+    description: SITE_DESCRIPTION,
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b0b0b" },
+  ],
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

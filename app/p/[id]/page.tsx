@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { ResultView } from "@/components/result-view";
 import { getSharedResult } from "@/lib/plans";
 import { shareText } from "@/lib/share-text";
+import { baseOpenGraph, baseTwitter } from "@/lib/site";
 
 export async function generateMetadata({ params }: PageProps<"/p/[id]">): Promise<Metadata> {
   const { id } = await params;
@@ -14,8 +15,8 @@ export async function generateMetadata({ params }: PageProps<"/p/[id]">): Promis
   return {
     title,
     description,
-    openGraph: { title, description, url: `/p/${id}` },
-    twitter: { title, description },
+    openGraph: { ...baseOpenGraph, title, description, url: `/p/${id}` },
+    twitter: { ...baseTwitter, title, description },
   };
 }
 
